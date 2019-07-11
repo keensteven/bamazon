@@ -22,9 +22,7 @@ connection.connect(function (err) {
 
 connection.query("SELECT * FROM products", function (err, response) {
   console.table(response)
-
-  // put inquirer prompt inside this connection because the query is asynchronous and we don't want to ask what one 
-  // to buy until they have seen the products
+  // console.log(response[1].item_id)
 
   inquirer.prompt([{
       name: "chosenProductID",
@@ -44,18 +42,27 @@ connection.query("SELECT * FROM products", function (err, response) {
       return each.item_id === answers.chosenProductID
     })
     // console.table(chosenProduct);
-    console.log(chosenProduct[0].stock_quantity);
+    console.log("We currently have " + chosenProduct[0].stock_quantity + " in stock and will process your order.");
 
     if (chosenProduct[0].stock_quantity >= answers.quantity) {
-      console.log("Thanks for your order")
-      //var newQuantity = -
-      //var total =
-      //update database with new quantity
+      var total = chosenProduct[0].price * answers.quantity;
+      console.log("The total is $" + total);
+      var newQuantity = chosenProduct[0].stock_quantity - answers.quantity;
+      console.log("We now have " + newQuantity + " left in stock.");
+      console.log("Thanks for your purchase!")
+
+      // update database with new quantity
+      "UPDATE products SET ? WHERE ?",
+      chosenProduct[0].stock_quantity= newQuantity;
+      console.table(response)
+
+
     } else {
-      console.log("Insufficient quantity, please try again")
+      console.log("Sorry, we don't have enough in stock. Please try again")
     }
 
   })
 
 
 })
+
