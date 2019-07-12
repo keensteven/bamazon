@@ -7,10 +7,7 @@ var connection = mysql.createConnection({
   // Your port; if not 3306
   port: 3306,
 
-  // Your username
   user: "root",
-
-  // Your password
   password: "root",
   database: "bamazon_DB"
 });
@@ -42,7 +39,7 @@ connection.query("SELECT * FROM products", function (err, response) {
       return each.item_id === answers.chosenProductID
     })
     // console.table(chosenProduct);
-    console.log("We currently have " + chosenProduct[0].stock_quantity + " in stock and will process your order.");
+    console.log("We currently have " + chosenProduct[0].stock_quantity + " in stock.");
 
     if (chosenProduct[0].stock_quantity >= answers.quantity) {
       var total = chosenProduct[0].price * answers.quantity;
@@ -52,17 +49,17 @@ connection.query("SELECT * FROM products", function (err, response) {
       console.log("Thanks for your purchase!")
 
       // update database with new quantity
-      "UPDATE products SET ? WHERE ?",
-      chosenProduct[0].stock_quantity= newQuantity;
-      console.table(response)
-
+      connection.query("UPDATE products SET ? WHERE ?",
+        [{
+          stock_quantity: newQuantity
+        }, {
+          item_id: answers.chosenProductID
+        }])
 
     } else {
-      console.log("Sorry, we don't have enough in stock. Please try again")
+      console.log("Sorry, we don't have enough in stock. Press Ctrl+C and type 'node bamazonCustomer' to try again.")
+      connection.query;
     }
-
   })
 
-
 })
-
